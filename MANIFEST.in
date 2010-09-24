@@ -1,4 +1,5 @@
 include AUTHORS
 include LICENSE
-include README.md
+include README.rst
 include requirements.txt
+recursive-include mediasync/tests/media *
