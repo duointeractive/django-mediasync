@@ -17,7 +17,8 @@ setup(
     packages=find_packages(),
     package_data = {
         'mediasync': [
-            'tests/media/*',
+            'tests/media/css/*',
+            'tests/media/js/*',
         ]
     },
     license='BSD License',
