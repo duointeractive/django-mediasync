@@ -110,6 +110,7 @@ def sync(client=None, force=False):
         if filedata is None:
             # combine_files() is only interested in CSS/JS files.
             continue
+        filedata, dirname = filedata
 
         content_type = mimetypes.guess_type(joinfile)[0] or 'application/octet-stream'
 
