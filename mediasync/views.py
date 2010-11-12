@@ -5,18 +5,11 @@ these are shimmed in.
 
 The static_serve() function is where the party starts.
 """
-from django.conf import settings
 from django.http import HttpResponse
 from django.views.static import serve
 from django.views.generic.simple import redirect_to
+from mediasync.msettings import CSS_PATH, JS_PATH, JOINED, SERVE_REMOTE, EMULATE_COMBO
 from mediasync import combine_files
-
-mediasync_settings = getattr(settings, 'MEDIASYNC', {})
-CSS_PATH = mediasync_settings.get("CSS_PATH", "")
-JS_PATH = mediasync_settings.get("JS_PATH", "")
-JOINED = mediasync_settings.get("JOINED", {})
-SERVE_REMOTE = mediasync_settings.get("SERVE_REMOTE", False)
-EMULATE_COMBO = mediasync_settings.get("EMULATE_COMBO", False)
 
 def combo_serve(request, path, client):
     """

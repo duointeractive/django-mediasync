@@ -2,21 +2,8 @@ import os
 import cStringIO
 import mimetypes
 from django.conf import settings
-
-JS_MIMETYPES = (
-    "application/javascript",
-    "text/javascript", # obsolete, see RFC 4329
-)
-CSS_MIMETYPES = (
-    "text/css",
-)
-TYPES_TO_COMPRESS = (
-    "application/json",
-    "application/xml",
-    "text/html",
-    "text/plain",
-    "text/xml",
-) + JS_MIMETYPES + CSS_MIMETYPES
+from mediasync.msettings import CSS_PATH, JS_PATH, JS_MIMETYPES, CSS_MIMETYPES, TYPES_TO_COMPRESS, JOINED
+from mediasync import backends
 
 class SyncException(Exception):
     pass
@@ -54,15 +41,12 @@ def combine_files(joinfile, sourcefiles, client):
     Returns a string containing the combo file, or None if the specified
     file can not be combo'd.
     """
-    CSS_PATH = settings.MEDIASYNC.get("CSS_PATH", "").strip('/')
-    JS_PATH = settings.MEDIASYNC.get("JS_PATH", "").strip('/')
-
     joinfile = joinfile.strip('/')
 
     if joinfile.endswith('.css'):
-        dirname = CSS_PATH
+        dirname = CSS_PATH.strip('/')
     elif joinfile.endswith('.js'):
-        dirname = JS_PATH
+        dirname = JS_PATH.strip('/')
     else:
         # By-pass this file since we only join CSS and JS.
         return None
@@ -87,11 +71,6 @@ def sync(client=None, force=False):
         and they have to be in a certain order as some variables rely
         on others.
     """
-
-    from mediasync import backends
-
-    assert hasattr(settings, "MEDIASYNC")
-
     # create client connection
     if client is None:
         client = backends.client()
@@ -103,9 +82,7 @@ def sync(client=None, force=False):
     # sync joined media
     #
 
-    joined = settings.MEDIASYNC.get("JOINED", {})
-
-    for joinfile, sourcefiles in joined.iteritems():
+    for joinfile, sourcefiles in JOINED.iteritems():
         filedata = combine_files(joinfile, sourcefiles, client)
         if filedata is None:
             # combine_files() is only interested in CSS/JS files.

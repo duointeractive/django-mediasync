@@ -1,25 +1,21 @@
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from mediasync import backends
-import mediasync
 import os
 import sys
 import unittest
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from mediasync import backends
+from mediasync import msettings
+import mediasync
 
 class BaseTestCase(unittest.TestCase):
 
     def testInvalidBackend(self):
-        settings.MEDIASYNC = {
-            'BACKEND': 'not.a.backend',
-        }
-        self.assertRaises(ImproperlyConfigured, backends.client)
+        msettings.BACKEND = 'not.a.backend'
 
 class DummyBackendTestCase(unittest.TestCase):
 
     def setUp(self):
-        settings.MEDIASYNC = {
-            'BACKEND': 'mediasync.backends.dummy',
-        }
+        msettings.BACKEND = 'mediasync.backends.dummy'
         self.client = backends.client()
 
     def testPush(self):
@@ -36,29 +32,27 @@ class DummyBackendTestCase(unittest.TestCase):
 class S3BackendTestCase(unittest.TestCase):
 
     def setUp(self):
-        settings.MEDIASYNC = {
-            'BACKEND': 'mediasync.backends.s3',
-            'AWS_BUCKET': 'mediasync_test',
-            'AWS_KEY': os.environ['AWS_KEY'],
-            'AWS_SECRET': os.environ['AWS_SECRET'],
-        }
+        msettings.BACKEND = 'mediasync.backends.s3'
+        msettings.AWS_BUCKET = 'mediasync_test'
+        msettings.AWS_KEY = os.environ['AWS_KEY']
+        msettings.AWS_SECRET = os.environ['AWS_SECRET']
         self.client = backends.client()
 
     def testServeRemote(self):
-        settings.MEDIASYNC['SERVE_REMOTE'] = False
+        msettings.SERVE_REMOTE = False
         self.assertEqual(backends.client().media_url(), '/media')
 
-        settings.MEDIASYNC['SERVE_REMOTE'] = True
+        msettings.SERVE_REMOTE = True
         self.assertEqual(backends.client().media_url(), 'http://mediasync_test.s3.amazonaws.com')
 
     def testMissingBucket(self):
-        del settings.MEDIASYNC['AWS_BUCKET']
+        msettings.AWS_BUCKET = None
         self.assertRaises(AssertionError, backends.client)
 
 class ProcessorTestCase(unittest.TestCase):
 
     def setUp(self):
-        settings.MEDIASYNC['PROCESSORS'] = (
+        msettings.PROCESSORS = (
             'mediasync.processors.js_minifier',
             lambda fd, ct, rp, r: fd.upper(),
         )

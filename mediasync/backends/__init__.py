@@ -1,18 +1,13 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
+from mediasync.msettings import BACKEND, PROCESSORS, EXPIRATION_DAYS, SERVE_REMOTE, MEDIA_ROOT, MEDIA_URL
 from mediasync import processors
 
-DEFAULT_PROCESSORS = (
-    processors.css_minifier,
-    processors.js_minifier,
-)
-
 def client():
-    backend_name = getattr(settings, 'MEDIASYNC', {}).get('BACKEND', '')
-    if not backend_name:
+    if not BACKEND:
         raise ImproperlyConfigured('must define a mediasync BACKEND property')
-    return load_backend(backend_name)
+    return load_backend(BACKEND)
 
 def load_backend(backend_name):
     try:
@@ -23,21 +18,16 @@ def load_backend(backend_name):
             "Error was: %s") % (backend_name, e))
 
 class BaseClient(object):
-
     def __init__(self, *args, **kwargs):
-
-        self._settings = getattr(settings, 'MEDIASYNC', None)
-        assert self._settings
-
         # mediasync settings
-        self.expiration_days = self._settings.get("EXPIRATION_DAYS", 365)
-        self.serve_remote = self._settings.get('SERVE_REMOTE', False)
+        self.expiration_days = EXPIRATION_DAYS
+        self.serve_remote = SERVE_REMOTE
 
         self.local_media_url = self.get_local_media_url()
         self.media_root = self.get_media_root()
 
         self.processors = []
-        for proc in self._settings.get("PROCESSORS", DEFAULT_PROCESSORS):
+        for proc in PROCESSORS:
 
             if isinstance(proc, basestring):
                 (module, attr) = proc.rsplit('.', 1)
@@ -52,19 +42,15 @@ class BaseClient(object):
 
     def get_local_media_url(self):
         """
-        Checks settings.MEDIASYNC['MEDIA_URL'], then settings.MEDIA_URL.
-        
         Broken out to allow overriding if need be.
         """
-        return self._settings.get('MEDIA_URL', getattr(settings, 'MEDIA_URL', ''))
+        return MEDIA_URL
 
     def get_media_root(self):
         """
-        Checks settings.MEDIASYNC['MEDIA_ROOT'], then settings.MEDIA_ROOT.
-        
         Broken out to allow overriding if need be.
         """
-        return self._settings.get('MEDIA_ROOT', getattr(settings, 'MEDIA_ROOT', ''))
+        return MEDIA_ROOT
 
     def media_url(self, with_ssl=False):
         """

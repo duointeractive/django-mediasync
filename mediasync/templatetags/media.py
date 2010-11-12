@@ -1,29 +1,14 @@
+import warnings
 from django import template
 from django.conf import settings
 from django.template.defaultfilters import stringfilter
+from mediasync.msettings import CSS_PATH, JS_PATH, DOCTYPE, JOINED, SERVE_REMOTE, EMULATE_COMBO, URL_PROCESSOR, CACHE_BUSTER, USE_SSL
 from mediasync import backends
-import warnings
-
-mediasync_settings = getattr(settings, 'MEDIASYNC', {})
 
 # Instance of the backend you configured in settings.py.
 client = backends.client()
-
-DOCTYPE = mediasync_settings.get("DOCTYPE", "xhtml")
-JOINED = mediasync_settings.get("JOINED", {})
-
-SERVE_REMOTE = client.serve_remote
-EMULATE_COMBO = mediasync_settings.get("EMULATE_COMBO", False)
-URL_PROCESSOR = mediasync_settings.get("URL_PROCESSOR", lambda x: x)
-CACHE_BUSTER = mediasync_settings.get("CACHE_BUSTER", None)
-
-# SSL settings
-USE_SSL = mediasync_settings.get("USE_SSL", None)
 MEDIA_URL = client.media_url()
 SECURE_MEDIA_URL = client.media_url(with_ssl=True)
-
-CSS_PATH = mediasync_settings.get("CSS_PATH", "")
-JS_PATH = mediasync_settings.get("JS_PATH", "")
 
 register = template.Library()
 
