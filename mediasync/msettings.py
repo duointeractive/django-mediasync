@@ -3,10 +3,12 @@ Mediasync configuration.
 """
 try:
     from django.conf import settings
+    __settings_dict = getattr(settings, 'MEDIASYNC', {})
 except ImportError:
     # This happens when running setup.py install. Fail silently and use all
     # of the defaults.
     settings = {}
+    __settings_dict = {}
 
 JS_MIMETYPES = (
     "application/javascript",
@@ -27,8 +29,6 @@ DEFAULT_PROCESSORS = (
     'mediasync.processors.css_minifier',
     'mediasync.processors.js_minifier',
 )
-
-__settings_dict = getattr(settings, 'MEDIASYNC', {})
 
 BACKEND = __settings_dict.get("BACKEND", None)
 CSS_PATH = __settings_dict.get("CSS_PATH", "")
