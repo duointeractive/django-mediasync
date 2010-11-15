@@ -1,7 +1,12 @@
 """
 Mediasync configuration.
 """
-from django.conf import settings
+try:
+    from django.conf import settings
+except ImportError:
+    # This happens when running setup.py install. Fail silently and use all
+    # of the defaults.
+    settings = {}
 
 JS_MIMETYPES = (
     "application/javascript",
