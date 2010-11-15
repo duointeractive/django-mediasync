@@ -1,3 +1,7 @@
+"""
+Important deal here is the sync() method. Most of the functions here assist
+sync() in directing the syncing of local media assets to the remote source.
+"""
 import os
 import cStringIO
 import mimetypes
@@ -9,12 +13,22 @@ class SyncException(Exception):
     pass
 
 def is_syncable_dir(dir_str):
+    """
+    Returns True if the given directory is syncable to remote storage.
+    """
     return not dir_str.startswith('.') and not dir_str.startswith('_')
 
 def is_syncable_file(file_str):
+    """
+    Returns True if the given file is syncable to remote storage.
+    """
     return not file_str.startswith('.') and not file_str.startswith('_')
 
 def listdir_recursive(dir_str):
+    """
+    Recursively walk through the directories under the media root. Yields
+    the results via a generator.
+    """
     for root, dirs, files in os.walk(dir_str):
         # Go through and yank any directories that don't pass our syncable
         # dir test. This needs to be done in place so that walk() will avoid.
@@ -38,8 +52,8 @@ def combine_files(joinfile, sourcefiles, client):
     Given a combo file name (joinfile), combine the sourcefiles into a single
     monolithic file.
     
-    Returns a string containing the combo file, or None if the specified
-    file can not be combo'd.
+    Returns a tuple containing a string with the combo file contents and
+    the CSS or JS dirname, or None if the specified file can not be combo'd.
     """
     joinfile = joinfile.strip('/')
 
@@ -66,10 +80,10 @@ def combine_files(joinfile, sourcefiles, client):
     return (filedata, dirname)
 
 def sync(client=None, force=False):
-    """ Let's face it... pushing this stuff to S3 is messy.
-        A lot of different things need to be calculated for each file
-        and they have to be in a certain order as some variables rely
-        on others.
+    """ 
+    Let's face it... pushing this stuff to S3 is messy. A lot of different 
+    things need to be calculated for each file and they have to be in a certain 
+    order as some variables rely on others.
     """
     # create client connection
     if client is None:
