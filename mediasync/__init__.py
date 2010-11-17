@@ -104,7 +104,7 @@ def sync(client=None, force=False):
         filedata, dirname = filedata
 
         content_type = mimetypes.guess_type(joinfile)[0] or 'application/octet-stream'
-
+        
         remote_path = joinfile
         if dirname:
             remote_path = "%s/%s" % (dirname, remote_path)

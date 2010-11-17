@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
-from mediasync.msettings import BACKEND, PROCESSORS, EXPIRATION_DAYS, SERVE_REMOTE, MEDIA_ROOT, MEDIA_URL
+from mediasync.msettings import BACKEND, PROCESSORS, EXPIRATION_DAYS, SERVE_REMOTE, MEDIA_ROOT, MEDIA_URL, EMULATE_COMBO
 from mediasync import processors
 
 def client():
@@ -26,10 +26,12 @@ class BaseClient(object):
         self.local_media_url = self.get_local_media_url()
         self.media_root = self.get_media_root()
 
+        # This will end up being a list of callables, if all goes well.
         self.processors = []
         for proc in PROCESSORS:
-
             if isinstance(proc, basestring):
+                # Processor is a string value, try to import the module with
+                # the same name.
                 (module, attr) = proc.rsplit('.', 1)
                 module = import_module(module)
                 proc = getattr(module, attr, None)
@@ -71,13 +73,37 @@ class BaseClient(object):
         return url.rstrip('/')
 
     def process(self, filedata, content_type, remote_path):
+        """
+        This method is used when syncing local media assets to S3, and when
+        serving local media assets through Django during development. It
+        iterates through all processors, which typically minify or slim
+        assets, and returns the results (if the processors return a
+        non-None value).
+        
+        filedata: (basestr) The content to process.
+        content_type: (basestr) A valid mimetype.
+        remote_path: (basestr) Remote path where the file will be served from
+            (if applicable). Most important thing is that the filename and
+            extension are present.
+        """
+        # self.processors is a now a list of callables.
         for proc in self.processors:
-            prcssd_filedata = proc(filedata, content_type, remote_path, self.serve_remote)
+            # Only want to process stuff when self.serve_remote == True while
+            # running ./manage.py syncmedia, or when EMULATE_COMBO is enabled
+            # and we're running locally.
+            processors_active = self.serve_remote or EMULATE_COMBO
+            # This will be the content after the processor runs on it.
+            prcssd_filedata = proc(filedata, content_type, remote_path, 
+                                   processors_active)
             if prcssd_filedata is not None:
+                # We got a useful value back from the processor, use it.
                 filedata = prcssd_filedata
         return filedata
 
     def process_and_put(self, filedata, content_type, remote_path, force=False):
+        """
+        Processes the content, then put/saves it to your backend.
+        """
         filedata = self.process(filedata, content_type, remote_path)
         return self.put(filedata, content_type, remote_path, force)
 

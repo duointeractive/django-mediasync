@@ -28,6 +28,14 @@ def combo_serve(request, path, client):
         mime_type = 'text/css'
     elif joinfile.endswith('.js'):
         mime_type = 'application/javascript'
+    else:
+        mime_type = 'application/octet-stream'
+        
+    remote_path = joinfile
+    if dirname:
+        remote_path = "%s/%s" % (dirname, remote_path)
+        
+    combo_data = client.process(combo_data, mime_type, remote_path)
 
     return HttpResponse(combo_data, mimetype=mime_type)
 
