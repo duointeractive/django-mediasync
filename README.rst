@@ -227,8 +227,8 @@ that you are serving from, you may set it like this::
     MEDIASYNC['AWS_BUCKET_CNAME'] = 'assets.sunlightlabs.com'
 
 This would mean that media would be served from 
-http://assets.sunlightlabs.com/ instead of the standard S3 bucket
-subdomain under amazonaws.com.
+http://assets.sunlightlabs.com/key_prefix instead of the standard S3 bucket
+subdomain shown earlier in this section.
 
 Tips
 ~~~~
