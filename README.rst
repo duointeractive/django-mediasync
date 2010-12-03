@@ -221,7 +221,7 @@ Optionally you may specify a path prefix::
 	MEDIASYNC['AWS_PREFIX'] = "key_prefix"
 
 Given the example values above, files would be served from
-http://s3.amazonaws.com/bucket_name/key_prefix/. If you have a DNS cname
+http://s3.amazonaws.com/bucket_name/key_prefix/. If you have a DNS CNAME
 that you are serving from, you may set it like this::
 
     MEDIASYNC['AWS_BUCKET_CNAME'] = 'assets.sunlightlabs.com'
