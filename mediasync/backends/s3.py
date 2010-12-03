@@ -31,9 +31,17 @@ class Client(BaseClient):
           with_ssl: (bool) If True, return an HTTPS url.
         """
         protocol = 'http' if with_ssl is False else 'https'
-        url = (AWS_BUCKET_CNAME and "%s://%s" or "%s://s3.amazonaws.com/%s") % (protocol, AWS_BUCKET)
+
+        if AWS_BUCKET_CNAME:
+            # Use a bucket CNAME, custom DNS.
+            url = "%s://%s" % (protocol, AWS_BUCKET_CNAME)
+        else:
+            # Use standard AWS URL.
+            url = "%s://s3.amazonaws.com/%s" % (protocol, AWS_BUCKET)
+
         if AWS_PREFIX:
             url = "%s/%s" % (url, AWS_PREFIX)
+
         return url
 
     def put(self, filedata, content_type, remote_path, force=False):

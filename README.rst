@@ -220,17 +220,15 @@ Optionally you may specify a path prefix::
 
 	MEDIASYNC['AWS_PREFIX'] = "key_prefix"
 
-Assuming a correct DNS CNAME entry, setting *AWS_BUCKET* to 
-*assets.sunlightlabs.com* and *AWS_PREFIX* to *myproject/media* would 
-sync the media directory to http://assets.sunlightlabs.com/myproject/media/.
+Given the example values above, files would be served from
+http://s3.amazonaws.com/bucket_name/key_prefix/. If you have a DNS cname
+that you are serving from, you may set it like this::
 
-Amazon allows users to create DNS CNAME entries to map custom domain names 
-to an AWS bucket. MEDIASYNC can be configured to use the bucket as the media 
-URL by setting *AWS_BUCKET_CNAME* to *True*.
+    MEDIASYNC['AWS_BUCKET_CNAME'] = 'assets.sunlightlabs.com'
 
-::
-
-	MEDIASYNC['AWS_BUCKET_CNAME'] = True
+This would mean that media would be served from 
+http://assets.sunlightlabs.com/ instead of the standard S3 bucket
+subdomain under amazonaws.com.
 
 Tips
 ~~~~
