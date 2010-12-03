@@ -49,7 +49,7 @@ as you're using the {% media_url %} tag (more details on this later)::
 
 	MEDIA_URL = '/devmedia/'
 
-*MEDIA_URL* is the URL that will be used in debug mode. Otherwise, 
+*MEDIA_URL* is the URL that will be used when SERVE_REMOTE == False. Otherwise, 
 the *MEDIA_URL* will be loaded from the backend settings.
 
 The following settings dict must also be added::
