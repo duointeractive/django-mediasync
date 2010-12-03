@@ -15,10 +15,9 @@ setup(
     author_email='jcarbaugh@sunlightfoundation.com',
     url='http://github.com/sunlightlabs/django-mediasync/',
     packages=find_packages(),
-    package_data = {
+    package_data={
         'mediasync': [
-            'tests/media/css/*',
-            'tests/media/js/*',
+            'tests/media/*/*',
         ]
     },
     license='BSD License',
