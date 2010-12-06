@@ -29,7 +29,7 @@ class Client(BaseClient):
         except AttributeError:
             raise ImproperlyConfigured("S3 keys not set and no boto config found.")
 
-        self._bucket = _conn.create_bucket(self.aws_bucket)
+        self._bucket = _conn.create_bucket(AWS_BUCKET)
 
     def remote_media_url(self, with_ssl=False):
         """
