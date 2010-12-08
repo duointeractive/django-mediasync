@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
 from mediasync.msettings import BACKEND, PROCESSORS, EXPIRATION_DAYS, SERVE_REMOTE, MEDIA_ROOT, MEDIA_URL, EMULATE_COMBO
@@ -93,7 +92,7 @@ class BaseClient(object):
             # and we're running locally.
             processors_active = self.serve_remote or EMULATE_COMBO
             # This will be the content after the processor runs on it.
-            prcssd_filedata = proc(filedata, content_type, remote_path, 
+            prcssd_filedata = proc(filedata, content_type, remote_path,
                                    processors_active)
             if prcssd_filedata is not None:
                 # We got a useful value back from the processor, use it.
