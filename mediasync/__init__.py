@@ -5,7 +5,6 @@ sync() in directing the syncing of local media assets to the remote source.
 import os
 import cStringIO
 import mimetypes
-from django.conf import settings
 from mediasync.msettings import CSS_PATH, JS_PATH, JS_MIMETYPES, CSS_MIMETYPES, TYPES_TO_COMPRESS, JOINED
 from mediasync import backends
 
@@ -104,7 +103,7 @@ def sync(client=None, force=False):
         filedata, dirname = filedata
 
         content_type = mimetypes.guess_type(joinfile)[0] or 'application/octet-stream'
-        
+
         remote_path = joinfile
         if dirname:
             remote_path = "%s/%s" % (dirname, remote_path)
